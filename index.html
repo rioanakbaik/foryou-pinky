@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>For You Pinky❤️</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+      font-family:'Poppins',sans-serif;
+    }
+
+    html,body{
+      width:100%;
+      min-height:100%;
+    }
+
+    body{
+      background:
+        radial-gradient(circle at 50% 20%, #8b102d 0%, transparent 35%),
+        linear-gradient(180deg,#180006,#3d000f,#75001e);
+      color:white;
+      overflow:hidden;
+    }
+
+    /* =========================
+       GLOBAL
+    ========================= */
+
+    .screen{
+      position:fixed;
+      inset:0;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      padding:25px;
+      transition:
+        opacity .8s ease,
+        visibility .8s ease;
+      z-index:20;
+    }
+
+    .screen.hidden{
+      opacity:0;
+      visibility:hidden;
+      pointer-events:none;
+    }
+
+    .glass{
+      width:min(420px,100%);
+      padding:35px 25px;
+      text-align:center;
+      border-radius:28px;
+      background:rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.12);
+      backdrop-filter:blur(15px);
+      -webkit-backdrop-filter:blur(15px);
+      box-shadow:
+        0 0 40px rgba(255,0,70,.2),
+        inset 0 0 30px rgba(255,255,255,.03);
+    }
+
+    /* =========================
+       LOADING
+    ========================= */
+
+    #loadingScreen{
+      flex-direction:column;
+      background:
+        radial-gradient(circle,#6b001c 0%,#250008 65%,#100003 100%);
+    }
+
+    .loading-heart{
+      font-size:75px;
+      animation:heartBeat 1s infinite;
+      filter:drop-shadow(0 0 20px rgba(255,40,90,.8));
+    }
+
+    .loading-title{
+      margin-top:20px;
+      font-size:24px;
+      font-weight:600;
+      letter-spacing:1px;
+    }
+
+    .loading-text{
+      margin-top:8px;
+      font-size:13px;
+      opacity:.65;
+    }
+
+    .loading-bar{
+      width:220px;
+      height:5px;
+      margin-top:25px;
+      overflow:hidden;
+      border-radius:10px;
+      background:rgba(255,255,255,.12);
+    }
+
+    .loading-progress{
+      width:0%;
+      height:100%;
+      border-radius:10px;
+      background:#ff4164;
+      box-shadow:0 0 12px #ff4164;
+      animation:loading 3s ease forwards;
+    }
+
+    @keyframes loading{
+      from{width:0%}
+      to{width:100%}
+    }
+
+    @keyframes heartBeat{
+      0%,100%{
+        transform:scale(1);
+      }
+      50%{
+        transform:scale(1.18);
+      }
+    }
+
+    /* =========================
+       PIN
+    ========================= */
+
+    #pinScreen{
+      z-index:15;
+    }
+
+    .pin-heart{
+      font-size:55px;
+      margin-bottom:15px;
+      filter:drop-shadow(0 0 15px rgba(255,40,90,.7));
+    }
+
+    .pin-title{
+      font-size:27px;
+      margin-bottom:8px;
+    }
+
+    .pin-subtitle{
+      font-size:13px;
+      opacity:.65;
+      margin-bottom:25px;
+    }
+
+    .pin-input{
+      width:100%;
+      padding:15px 18px;
+      border:none;
+      outline:none;
+      border-radius:15px;
+      background:rgba(255,255,255,.1);
+      color:white;
+      text-align:center;
+      font-size:18px;
+      letter-spacing:5px;
+      border:1px solid rgba(255,255,255,.12);
+    }
+
+    .pin-input::placeholder{
+      color:rgba(255,255,255,.35);
+      letter-spacing:1px;
+    }
+
+    .open-btn{
+      width:100%;
+      margin-top:15px;
+      padding:15px;
+      border:none;
+      border-radius:15px;
+      background:linear-gradient(135deg,#ff1744,#c90032);
+      color:white;
+      font-size:16px;
+      font-weight:600;
+      cursor:pointer;
+      box-shadow:0 0 25px rgba(255,23,68,.3);
+      transition:.2s;
+    }
+
+    .open-btn:active{
+      transform:scale(.96);
+    }
+
+    .pin-hint{
+      margin-top:15px;
+      font-size:11px;
+      opacity:.4;
+    }
+
+    /* =========================
+       MAIN CONTENT
+    ========================= */
+
+    #mainScreen{
+      position:fixed;
+      inset:0;
+      padding:25px;
+      overflow-y:auto;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      opacity:0;
+      visibility:hidden;
+      transition:opacity 1s ease;
+      z-index:5;
+    }
+
+    #mainScreen.show{
+      opacity:1;
+      visibility:visible;
+    }
+
+     .card{
+    width:min(760px,100%);
+    max-height:88vh;
+    overflow-y:auto;
+    padding:42px 46px 38px;
+    border-radius:26px;
+    background:rgba(255,255,255,.08);
+    border:1px solid rgba(255,255,255,.12);
+    backdrop-filter:blur(16px);
+    -webkit-backdrop-filter:blur(16px);
+    box-shadow:
+      0 15px 50px rgba(0,0,0,.2),
+      0 0 35px rgba(255,0,60,.15);
+    scrollbar-width:none;
+    animation:cardAppear 1.2s ease;
+  }
+
+  .card::-webkit-scrollbar{
+    display:none;
+  }
+
+  .top-heart{
+    text-align:center;
+    font-size:42px;
+    margin-bottom:14px;
+    animation:softBeat 2s infinite;
+    filter:drop-shadow(0 0 15px rgba(255,50,90,.6));
+  }
+
+  h1{
+    text-align:center;
+    font-size:clamp(30px,7vw,44px);
+    margin-bottom:32px;
+    letter-spacing:-.5px;
+    text-shadow:0 0 20px rgba(255,255,255,.35);
+  }
+
+  .message{
+    max-width:650px;
+    margin:auto;
+    text-align:left;
+    font-size:clamp(14px,3vw,16px);
+    line-height:1.85;
+    color:rgba(255,255,255,.94);
+  }
+
+  .message p{
+    margin:0 0 22px;
+  }
+
+  .message p:last-child{
+    margin-bottom:0;
+  }
+
+  .signature{
+    max-width:650px;
+    margin:30px auto 0;
+    padding-top:25px;
+    border-top:1px solid rgba(255,255,255,.12);
+    text-align:center;
+    font-size:14px;
+    line-height:1.7;
+    opacity:.8;
+  }
+
+  .ending-heart{
+    text-align:center;
+    margin-top:22px;
+    font-size:25px;
+    letter-spacing:7px;
+    animation:softBeat 2s infinite;
+  }
+
+  @media(max-width:600px){
+
+    #mainScreen{
+      padding:18px;
+      align-items:center;
+    }
+
+    .card{
+      width:100%;
+      max-height:90vh;
+      padding:30px 22px 28px;
+      border-radius:22px;
+    }
+
+    .top-heart{
+      font-size:38px;
+    }
+
+    h1{
+      margin-bottom:25px;
+    }
+
+    .message{
+      font-size:14px;
+      line-height:1.85;
+    }
+
+    .message p{
+      margin-bottom:20px;
+    }
+
+    .signature{
+      margin-top:25px;
+      padding-top:20px;
+      font-size:13px;
+    }
+  }
+
+    .ending-heart{
+      margin-top:25px;
+      font-size:28px;
+      letter-spacing:8px;
+      animation:softBeat 2s infinite;
+    }
+
+    @keyframes cardAppear{
+      from{
+        opacity:0;
+        transform:translateY(35px) scale(.97);
+      }
+      to{
+        opacity:1;
+        transform:translateY(0) scale(1);
+      }
+    }
+
+    @keyframes softBeat{
+      0%,100%{transform:scale(1)}
+      50%{transform:scale(1.08)}
+    }
+
+    /* =========================
+       MUSIC
+    ========================= */
+
+    .music-control{
+      position:fixed;
+      right:18px;
+      top:18px;
+      z-index:30;
+      border:none;
+      border-radius:50px;
+      padding:10px 15px;
+      background:rgba(255,255,255,.1);
+      border:1px solid rgba(255,255,255,.15);
+      backdrop-filter:blur(10px);
+      color:white;
+      font-size:12px;
+      cursor:pointer;
+      display:none;
+    }
+
+    .music-control.show{
+      display:block;
+    }
+
+    /* =========================
+       FLOATING HEARTS
+    ========================= */
+
+    .heart{
+      position:fixed;
+      bottom:-50px;
+      color:#ff4d6d;
+      pointer-events:none;
+      z-index:1;
+      opacity:.65;
+      animation:floatHeart linear forwards;
+      text-shadow:0 0 10px rgba(255,50,90,.5);
+    }
+
+    @keyframes floatHeart{
+      0%{
+        transform:translateY(0) rotate(0deg) scale(.8);
+        opacity:0;
+      }
+
+      15%{
+        opacity:.7;
+      }
+
+      100%{
+        transform:
+          translateY(-115vh)
+          rotate(360deg)
+          scale(1.4);
+        opacity:0;
+      }
+    }
+
+    /* =========================
+       SMALL SCREENS
+    ========================= */
+
+    @media(max-width:480px){
+
+      .glass{
+        padding:30px 20px;
+      }
+
+      .card{
+        padding:30px 20px 90px;
+      }
+
+      .message{
+        line-height:1.85;
+      }
+
+      .music-control{
+        top:auto;
+        right:50%;
+        bottom:15px;
+        transform:translateX(50%);
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- =========================
+       LOADING SCREEN
+  ========================== -->
+
+  <div class="screen" id="loadingScreen">
+
+    <div class="loading-heart">❤️</div>
+
+    <div class="loading-title">
+      Sebentar ya...
+    </div>
+
+    <div class="loading-text">
+      wait a moment, okay
+    </div>
+
+    <div class="loading-bar">
+      <div class="loading-progress"></div>
+    </div>
+
+  </div>
+
+
+  <!-- =========================
+       PIN SCREEN
+  ========================== -->
+
+  <div class="screen hidden" id="pinScreen">
+
+    <div class="glass">
+
+      <div class="pin-heart">
+        💌
+      </div>
+
+      <div class="pin-title">
+        For You
+      </div>
+
+      <div class="pin-subtitle">
+        masukin pin kalo mau lanjut hehe
+      </div>
+
+      <input
+        type="text"
+        id="pinInput"
+        class="pin-input"
+        placeholder="PIN bebas..."
+        autocomplete="off"
+      >
+
+      <button class="open-btn" id="openBtn">
+        BUKA ❤️
+      </button>
+
+      <div class="pin-hint">
+        masukin tanggal, bulan lahir kau yahhh :)
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- =========================
+       MAIN MESSAGE
+  ========================== -->
+
+  <main id="mainScreen">
+
+    <div class="card">
+
+      <div class="top-heart">
+        ❤️
+      </div>
+
+      <h1>
+        Happy Birthday
+      </h1>
+
+      <div class="message">
+      </p>
+      Happy birthday pinky, selamat ulang tahun yahhh,
+      semoga kamu panjang umur dan sehat selalu dan semoga kamu cantik selalu yahh.
+      </p>
+      </p>
+      Kamu jangan sampe telat makan yahh, trs kamu juga jangan sampe kecapean.
+      Misalnya kamu sering begadang juga jangan keseringan yahh,
+      <p>
+      </p>
+      ntar kalau kamu kenapa-kenapa gimana?
+      <p>
+      </p>
+      Pasti banyak yang khawatir sama kamu dan juga masih banyak
+      orang yang sayang sama kamu.
+      <p>
+      </p>
+      Maaf yah aku cuma bisa buat kek gini doang,
+      belum bisa ngasih kamu apa-apa.
+      <p>
+      </p>
+      Tapi buat aku...
+      kamu itu adalah orang yang baik, pengertian, lemah lembut
+      dan beda dari wanita yang lain.
+      <p>
+      </p>
+      Dan kamu itu orangnya special buat aku hehehehe.
+      <p>
+      </p>Selamat ulang tahun yahh, pinkyyy :3 ❤️</div>
+
+      <div class="signature">
+        Semoga hari ini jadi salah satu hari terbaikmu ❤️
+      </div>
+
+      <div class="ending-heart">
+        ♡ ❤️ ♡
+      </div>
+
+    </div>
+
+  </main>
+
+
+  <!-- =========================
+       MUSIC
+  ========================== -->
+
+  <button
+    class="music-control"
+    id="musicBtn">
+    🎵 Musik
+  </button>
+
+  <audio id="bgAudio" loop preload="auto">
+    <source src="lagu.mp3" type="audio/mpeg">
+  </audio>
+
+
+  <script>
+
+    /* =========================
+       ELEMENTS
+    ========================== */
+
+    const loadingScreen =
+      document.getElementById("loadingScreen");
+
+    const pinScreen =
+      document.getElementById("pinScreen");
+
+    const mainScreen =
+      document.getElementById("mainScreen");
+
+    const pinInput =
+      document.getElementById("pinInput");
+
+    const openBtn =
+      document.getElementById("openBtn");
+
+    const audio =
+      document.getElementById("bgAudio");
+
+    const musicBtn =
+      document.getElementById("musicBtn");
+
+
+    /* =========================
+       LOADING
+    ========================== */
+
+    setTimeout(() => {
+
+      loadingScreen.classList.add("hidden");
+
+      setTimeout(() => {
+
+        pinScreen.classList.remove("hidden");
+
+      }, 500);
+
+    }, 3200);
+
+
+    /* =========================
+       OPEN MESSAGE
+    ========================== */
+
+    async function openMessage(){
+
+      // PIN memang bebas.
+      // Yang penting tombol dibuka.
+
+      pinScreen.classList.add("hidden");
+
+      setTimeout(() => {
+
+        mainScreen.classList.add("show");
+        musicBtn.classList.add("show");
+
+      }, 500);
+
+
+      /*
+        Browser biasanya hanya mengizinkan
+        autoplay audio setelah ada interaksi user.
+
+        Karena fungsi ini dipanggil dari klik tombol,
+        musik bisa langsung dicoba dimainkan.
+      */
+
+      try{
+
+        audio.volume = 0.45;
+
+        await audio.play();
+
+        musicBtn.textContent = "⏸ Musik";
+
+      }catch(error){
+
+        /*
+          Kalau browser tetap menolak autoplay,
+          tombol musik tetap tersedia.
+        */
+
+        musicBtn.textContent = "▶ Musik";
+
+      }
+
+    }
+
+
+    openBtn.addEventListener(
+      "click",
+      openMessage
+    );
+
+
+    /* =========================
+       ENTER UNTUK MEMBUKA
+    ========================== */
+
+    pinInput.addEventListener(
+      "keydown",
+      function(event){
+
+        if(event.key === "Enter"){
+          openMessage();
+        }
+
+      }
+    );
+
+
+    /* =========================
+       MUSIC CONTROL
+    ========================== */
+
+    musicBtn.addEventListener(
+      "click",
+      async function(){
+
+        try{
+
+          if(audio.paused){
+
+            await audio.play();
+
+            musicBtn.textContent =
+              "⏸ Musik";
+
+          }else{
+
+            audio.pause();
+
+            musicBtn.textContent =
+              "▶ Musik";
+
+          }
+
+        }catch(error){
+
+          musicBtn.textContent =
+            "⚠️ Lagu tidak ditemukan";
+
+        }
+
+      }
+    );
+
+
+    audio.addEventListener(
+      "error",
+      function(){
+
+        musicBtn.textContent =
+          "⚠️ Lagu tidak ditemukan";
+
+      }
+    );
+
+
+    /* =========================
+       FLOATING HEARTS
+    ========================== */
+
+    function createHeart(){
+
+      const heart =
+        document.createElement("div");
+
+      heart.className = "heart";
+
+      const hearts = [
+        "❤",
+        "♥",
+        "♡",
+        "💗",
+        "💖"
+      ];
+
+      heart.textContent =
+        hearts[
+          Math.floor(
+            Math.random() * hearts.length
+          )
+        ];
+
+      heart.style.left =
+        Math.random() * 100 + "vw";
+
+      heart.style.fontSize =
+        (Math.random() * 22 + 14) + "px";
+
+      heart.style.animationDuration =
+        (Math.random() * 6 + 6) + "s";
+
+      document.body.appendChild(heart);
+
+      setTimeout(() => {
+        heart.remove();
+      }, 13000);
+
+    }
+
+    setInterval(
+      createHeart,
+      350
+    );
+
+
+    /* =========================
+       INITIAL HEARTS
+    ========================== */
+
+    for(let i = 0; i < 8; i++){
+
+      setTimeout(
+        createHeart,
+        i * 250
+      );
+
+    }
+
+  </script>
+
+</body>
+</html>
